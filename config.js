@@ -321,7 +321,7 @@ export const CONFIG = {
   // shows up at the very end, after the "crash". \n\n = new paragraph
   message: t(
     "I love you man. You've been a true partner, a great friend, and for real, a brother to me.\n\nWriting another birthday message on WhatsApp with a few photos felt way too cliché, so I made you this instead. (Thank god Neword pays for Claude.)\n\nHappy birthday, love you man ❤️",
-    "אוהב אותך אח יקר. אתה שותף אמיתי, חבר מטורף, ובאמת כמו אח בשבילי.\n\nחשבתי על לכתוב לך עוד ברכה בוואטסאפ עם כמה תמונות אבל הרגיש לי קצת בנאלי מדי, אז עשיתי לך את זה במקום. (מזל שניוורד ממן את הקלוד שלי)\n\nאז שיהיה לך מלא מזל טוב, חיים מדהימים תמשיך לחוות, להנות, להיות בזוגיות מדהימה עם גלגול, ליזום ושתעשה ארגז אחי.\n\nמזל טוב, אוהב אותך ❤️",
+    "אוהב אותך אח יקר. אתה שותף אמיתי, חבר מטורף, ובאמת כמו אח בשבילי.\n\nחשבתי על לכתוב לך עוד ברכה בוואטסאפ עם כמה תמונות אבל הרגיש לי קצת בנאלי מדי, אז עשיתי לך את זה במקום. (מזל שניוורד מממן את המנוי שלי לקלוד)\n\nאז שיהיה לך מלא מזל טוב, חיים מדהימים תמשיך לחוות, להנות, להיות בזוגיות מדהימה עם גלגול, ליזום ושתעשה ארגז אחי.\n\nמזל טוב, אוהב אותך ❤️",
   ),
 
   // "through the years" gallery. src = a real photo. no src = his face with an effect.

@@ -95,6 +95,7 @@ function loader() {
   $("#enter").onclick = () => {
     sfx.initAudio();
     sfx.tada();
+    sfx.startSong(CONFIG.song);
     $("#loader").remove();
     document.body.classList.remove("locked");
     setTimeout(() => achieve("open"), 1500);
@@ -348,10 +349,15 @@ function memories() {
       v.dataset.src = m.video;
       const off = t("🔇 tap for sound", "🔇 לחץ בשביל סאונד"), on = t("🔊 sound on", "🔊 עם סאונד");
       const sound = el("button", "tape-sound", off);
-      sound.onclick = () => {
-        v.muted = !v.muted;
-        sound.textContent = v.muted ? off : on;
+      // a tape with its sound on turns the background song down
+      const setSound = (onNow) => {
+        v.muted = !onNow;
+        sound.textContent = onNow ? on : off;
+        sfx.dipSong(m.video, onNow);
       };
+      sound.onclick = () => setSound(v.muted);
+      // scrolled away (so it paused): back to silent
+      v.addEventListener("pause", () => !v.muted && setSound(false));
       screen.append(v, el("span", "tape-osd", "▶ PLAY"), el("span", "tape-rec", "● REC"), sound);
       videos.push(v);
     } else {
@@ -420,6 +426,7 @@ function wish(finale) {
     if (dodges < MAX || sec.classList.contains("finale")) return;
     sec.classList.add("finale");
     sec.scrollIntoView({ block: "start" });
+    sfx.pauseSong(); // the music box gets the stage, then the crash is silent
     const dur = finale();
     emojiStorm(dur * 1000);
     setTimeout(() => achieve("wish"), 2500);
@@ -473,6 +480,7 @@ function bsod() {
       $("#sincere-msg").textContent = fmt(CONFIG.message);
       $("#sincere-from").textContent = CONFIG.from;
       $("#sincere").classList.add("on");
+      sfx.resumeSong(); // the song comes back for the message
     };
     addEventListener("keydown", reboot);
     b.addEventListener("pointerdown", reboot);

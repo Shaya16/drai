@@ -21,6 +21,52 @@ export function initAudio() {
   unlockPhone();
 }
 
+// ---------- the background song ----------
+// it goes through the same volume knob as everything else (so mute mutes it too), plus a knob of its own
+// that dips it while something else needs to be heard. (iphones ignore an <audio>'s own volume, hence web audio)
+const SONG_LEVEL = 0.75, SONG_DIPPED = 0.12;
+let song, songGain, songWanted = false;
+const dips = new Set();
+
+// call from the same tap as initAudio
+export function startSong(src) {
+  if (!ctx || song || !src) return;
+  song = new Audio(src);
+  song.loop = true;
+  songGain = ctx.createGain();
+  songGain.gain.value = SONG_LEVEL;
+  ctx.createMediaElementSource(song).connect(songGain).connect(master);
+  songWanted = true;
+  song.play().catch(() => {});
+  // no music playing in the background while you're in another app
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) song.pause();
+    else if (songWanted) song.play().catch(() => {});
+  });
+}
+
+// dipSong("fight", true) while the fight video plays; the song comes back up once nothing is dipping it
+export function dipSong(why, on) {
+  if (on) dips.add(why);
+  else dips.delete(why);
+  if (!songGain) return;
+  const t = ctx.currentTime, g = songGain.gain;
+  g.cancelScheduledValues(t);
+  g.setValueAtTime(g.value, t);
+  g.setTargetAtTime(dips.size ? SONG_DIPPED : SONG_LEVEL, t, 0.25);
+}
+
+export function pauseSong() {
+  songWanted = false;
+  song?.pause();
+}
+
+export function resumeSong() {
+  if (!song) return;
+  songWanted = true;
+  song.play().catch(() => {});
+}
+
 // iphones play web sounds like ringtones, so with the silent switch on you'd hear nothing (videos still play though).
 // newer safari can just be told this is "playback"; older ones need a silent <audio> going to switch over
 let unlocked = false;

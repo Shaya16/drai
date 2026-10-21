@@ -10,6 +10,8 @@ export const CONFIG = {
   gfName: t("Gal", "גל"),
 
   // ---------- the start ----------
+  // the background song: starts with the installer's start button and loops. "" = no song
+  song: "music/song.mp3",
   // the fake installer's messages, in order: [how full the bar is (%), what it says]
   loader: t(
     [

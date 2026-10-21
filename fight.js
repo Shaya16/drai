@@ -77,6 +77,7 @@ export function initFight(head, fmt, { boom, achieve }) {
     btn.hidden = true;
     // phones only let a video play with sound if it's started right from the tap, so it's started (and paused) now
     sfx.initAudio();
+    sfx.dipSong("fight", true); // the background song steps back for the announcer and the video's sound
     loadVideo();
     video.muted = sfx.isMuted();
     let rolling = false; // (a slow tape could finish starting after the fight already started it for real)
@@ -161,6 +162,7 @@ export function initFight(head, fmt, { boom, achieve }) {
     say(fmt(cfg.winner), "win");
     sfx.announce(fmt(cfg.winnerSpoken), t("en-US", "he-IL"));
     achieve("fight");
+    setTimeout(() => sfx.dipSong("fight", false), 3500); // after the announcer is done
     btn.textContent = t("🔁 REMATCH", "🔁 קרב חוזר");
     btn.hidden = false;
     running = false;

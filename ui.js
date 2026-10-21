@@ -93,9 +93,10 @@ function loader() {
     w.classList.add("shake");
   };
   $("#enter").onclick = () => {
+    // the song first: phones only let it start straight from this tap
+    sfx.startSong(CONFIG.song);
     sfx.initAudio();
     sfx.tada();
-    sfx.startSong(CONFIG.song);
     $("#loader").remove();
     document.body.classList.remove("locked");
     setTimeout(() => achieve("open"), 1500);

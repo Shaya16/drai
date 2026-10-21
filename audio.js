@@ -3,6 +3,10 @@ let ctx, master;
 let muted = false;
 const VOLUME = 0.35;
 
+// iphones play web sounds like ringtones, so with the silent switch on you'd hear nothing. newer safari can be
+// told this is "playback" (like music), which only sticks if it's said before any sound starts
+if (navigator.audioSession) navigator.audioSession.type = "playback";
+
 // call from a tap/click: phones only allow sound that starts from one
 export function initAudio() {
   if (!ctx) {
@@ -22,38 +26,45 @@ export function initAudio() {
 }
 
 // ---------- the background song ----------
-// it goes through the same volume knob as everything else (so mute mutes it too), plus a knob of its own
-// that dips it while something else needs to be heard. (iphones ignore an <audio>'s own volume, hence web audio)
-const SONG_LEVEL = 0.75, SONG_DIPPED = 0.12;
-let song, songGain, songWanted = false;
+// a plain <audio>: iphones play those even with the silent switch on, while a song routed through web audio
+// can come out silent there. when something else needs to be heard it fades down, or, on iphones (which ignore
+// an <audio>'s volume), pauses until that's over
+const SONG_LEVEL = 0.7, SONG_DIPPED = 0.1;
+let song, songWanted = false, volumeWorks = true, fade;
 const dips = new Set();
+const songShouldPlay = () => songWanted && !document.hidden && !(dips.size && !volumeWorks);
 
 // call from the same tap as initAudio
 export function startSong(src) {
-  if (!ctx || song || !src) return;
+  if (song || !src) return;
   song = new Audio(src);
   song.loop = true;
-  songGain = ctx.createGain();
-  songGain.gain.value = SONG_LEVEL;
-  ctx.createMediaElementSource(song).connect(songGain).connect(master);
+  song.muted = muted;
+  song.volume = SONG_LEVEL;
+  volumeWorks = Math.abs(song.volume - SONG_LEVEL) < 0.01;
   songWanted = true;
   song.play().catch(() => {});
   // no music playing in the background while you're in another app
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) song.pause();
-    else if (songWanted) song.play().catch(() => {});
-  });
+  document.addEventListener("visibilitychange", () => (songShouldPlay() ? song.play().catch(() => {}) : song.pause()));
+  // phones refuse or pause it sometimes (a video with sound started, a call came in...). they only let it
+  // start again from a tap, so every tap checks whether it should be playing
+  const retry = () => song.paused && songShouldPlay() && song.play().catch(() => {});
+  for (const ev of ["pointerdown", "touchend", "keydown"]) addEventListener(ev, retry, { passive: true });
 }
 
-// dipSong("fight", true) while the fight video plays; the song comes back up once nothing is dipping it
+// dipSong("fight", true) while the fight video plays; the song comes back once nothing is dipping it
 export function dipSong(why, on) {
   if (on) dips.add(why);
   else dips.delete(why);
-  if (!songGain) return;
-  const t = ctx.currentTime, g = songGain.gain;
-  g.cancelScheduledValues(t);
-  g.setValueAtTime(g.value, t);
-  g.setTargetAtTime(dips.size ? SONG_DIPPED : SONG_LEVEL, t, 0.25);
+  if (!song) return;
+  if (!volumeWorks) return songShouldPlay() ? song.play().catch(() => {}) : song.pause();
+  const to = dips.size ? SONG_DIPPED : SONG_LEVEL;
+  clearInterval(fade);
+  fade = setInterval(() => {
+    const v = song.volume + Math.sign(to - song.volume) * 0.04;
+    song.volume = Math.abs(to - v) < 0.04 ? to : v;
+    if (song.volume === to) clearInterval(fade);
+  }, 30);
 }
 
 export function pauseSong() {
@@ -64,17 +75,15 @@ export function pauseSong() {
 export function resumeSong() {
   if (!song) return;
   songWanted = true;
-  song.play().catch(() => {});
+  if (songShouldPlay()) song.play().catch(() => {});
 }
 
-// iphones play web sounds like ringtones, so with the silent switch on you'd hear nothing (videos still play though).
-// newer safari can just be told this is "playback"; older ones need a silent <audio> going to switch over
+// older iphones (no audioSession, see the top) need some <audio> playing to switch over from ringtone mode
 let unlocked = false;
 function unlockPhone() {
   if (unlocked) return;
   unlocked = true;
-  if (navigator.audioSession) navigator.audioSession.type = "playback";
-  else if (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent))) {
+  if (!navigator.audioSession && (/iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.maxTouchPoints > 1 && /Mac/.test(navigator.userAgent)))) {
     const keepAlive = new Audio(silentWav());
     keepAlive.loop = true;
     keepAlive.play().catch(() => {});
@@ -110,6 +119,7 @@ function silentWav(rate = 8000, n = 4000) {
 export function setMuted(m) {
   muted = m;
   if (master) master.gain.value = m ? 0 : VOLUME;
+  if (song) song.muted = m;
   if (m) window.speechSynthesis?.cancel();
 }
 

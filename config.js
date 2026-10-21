@@ -6,7 +6,7 @@ import { t } from "./lang.js";
 export const CONFIG = {
   name: t("Drai", "דריי"),
   age: 27, // the age he's turning
-  from: t("Shay", "שי"),
+  from: t("Shay", "שי AKA אביב"),
   gfName: t("Gal", "גל"),
 
   // ---------- the start ----------

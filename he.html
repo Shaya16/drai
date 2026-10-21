@@ -1,0 +1,308 @@
+<!doctype html>
+<!-- the hebrew version of index.html. same site, same scripts: they see lang="he" and switch their texts (see lang.js) -->
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>מזל טוב!!!1!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Frank+Ruhl+Libre:wght@700&family=Heebo:wght@400;500;600;700;800&family=Rubik:wght@400;700&family=Secular+One&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</head>
+<body class="locked">
+  <canvas id="gl"></canvas>
+  <marquee id="ticker" scrollamount="8"></marquee>
+  <button id="mute" title="סאונד">🔊</button>
+  <div id="counter">מבקרים: <b>000002</b></div>
+
+  <div id="loader">
+    <div class="win98" id="loader-win">
+      <div class="titlebar"><span>birthday_installer.exe</span><button class="x" id="loader-x">✕</button></div>
+      <div class="win-body">
+        <p id="load-msg">מאתחל...</p>
+        <div class="bar"><div id="load-fill"></div></div>
+        <p id="load-pct">0%</p>
+        <button class="btn98" id="enter" hidden>▶ יאללה, תתחיל כפרה (תפעיל סאונד 🔊)</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // modules + webgl textures don't work from file://, it needs a tiny local server (see README.md)
+    if (location.protocol === "file:") {
+      document.getElementById("load-msg").textContent = "⚠️ זה לא עובד בלחיצה כפולה על הקובץ. תסתכל ב-README.md (צריך שרת קטן) 😅";
+    }
+  </script>
+
+  <main>
+    <section class="scrolly" data-scene="face" style="height:600vh">
+      <div class="stick">
+        <div class="chapter" dir="ltr">chapter 1 / 12 · the face</div>
+        <div class="osd" data-a="0" data-b="0.3">▶ PLAY</div>
+        <div class="osd blink" data-a="0.3" data-b="0.68">❚❚ PAUSE</div>
+        <p class="sub big" data-a="0" data-b="0.1">אהלן אח יקר יא דרי. תתחיל לגלול👇</p>
+        <p class="sub" data-a="0.1" data-b="0.3">רגע, בוא נעשה איזה זום קטן נראה מה יש פה 🔍</p>
+        <p class="sub" data-a="0.3" data-b="0.4" data-boom>מה זה✋ מה עובר על העיניים שלך 😳</p>
+        <p class="sub" data-a="0.4" data-b="0.55">תן לי דקה, אני מסדר את זה</p>
+        <p class="sub" data-a="0.55" data-b="0.68" data-boom>הופההה✅ ...רגע. עכשיו אתה מסתכל עליי ועל גל במקביל 🤨</p>
+        <p class="sub" data-a="0.68" data-b="0.82" data-boom>תן לי דקה מסדר 💀</p>
+        <p class="sub big" data-a="0.82" data-b="1.01">much better כפרה..</p>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="age" data-ach="age" style="height:360vh">
+      <div class="stick">
+        <div class="chapter" dir="ltr">chapter 2 / 12 · the age</div>
+        <p class="sub" data-a="0" data-b="0.22">קיצר מזל טוב אח יקר אתה בן..</p>
+        <p class="sub" data-a="0.22" data-b="0.44">רגע רגע... <span id="fakepct">0</span>%</p>
+        <p class="sub big" data-a="0.44" data-b="0.62" data-boom>אתה בן <span class="age"></span> 💀</p>
+        <p class="sub" data-a="0.62" data-b="0.82">אבל הליבידו שלך בן <span class="age" data-add="-10"></span></p>
+        <p class="sub" data-a="0.82" data-b="1.01">ומפה זה רק הולך ומידרדר 👇</p>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="hairline" style="height:500vh">
+      <div class="stick">
+        <div class="docu"></div>
+        <div class="chapter" dir="ltr">chapter 3 / 12 · the hairline (a documentary)</div>
+        <div class="hl-hud">📅 <b id="hl-year"></b><br>📏 מצח: <b id="hl-cm"></b></div>
+        <p class="sub" data-a="0" data-b="0.14">🎬 אז יש סרט תיעודי על קו השיער שלך חביבי</p>
+        <p class="sub" data-a="0.14" data-b="0.34">זה התחיל לאט לאט</p>
+        <p class="sub" data-a="0.34" data-b="0.54" data-boom>ואז השערות התחילו לנשור.. אחת אחת.</p>
+        <p class="sub" data-a="0.54" data-b="0.72">למצח יש כבר מזג אוויר משלו 🌦️</p>
+        <p class="sub" data-a="0.72" data-b="0.86">העירייה אישרה בנייה 🏗️</p>
+        <p class="sub big" data-a="0.86" data-b="1.01" data-boom>✈️ עלייה למטוס: נמל התעופה הבינלאומי ע״ש <span class="nm"></span></p>
+      </div>
+    </section>
+
+    <section id="physics" data-scene="money">
+      <p class="kicker" dir="ltr">chapter 4 / 12</p>
+      <h2 class="wordart" dir="ltr">the multiverse</h2>
+      <p class="blurb">בשלב מסוים <span class="nm"></span> היה צריך לבחור: כסף או פיזיקה.<br>הוא בחר בפיזיקה. והפיזיקה אומרת שיש יקום אחר, שבו אתה יושב על ארגז. בוא נראה מה היה יכול להיות</p>
+      <div class="verse-grid">
+        <div class="verse rich">
+          <h3>🌌 יקום #1<br><small>הוא בחר בכסף</small></h3>
+          <div class="verse-face" id="rich-face"><img class="vf" alt=""><span class="v-shades">🕶️</span><span class="v-chain"></span></div>
+          <img class="verse-photo" id="rich-photo" alt="הוא מפזר כסף" hidden>
+          <ul id="verse-money"></ul>
+        </div>
+        <div class="verse poor">
+          <h3>🌍 יקום #2<br><small>הוא בחר בפיזיקה (זה ביקום שלנו, לצערנו)</small></h3>
+          <div class="verse-face"><img class="vf" alt=""><span class="v-tear">💧</span></div>
+          <ul id="verse-physics"></ul>
+        </div>
+      </div>
+      <div class="win98 calc">
+        <div class="titlebar"><span>salary_calculator.exe (physics edition)</span></div>
+        <div class="win-body">
+          <pre id="calc-out">תלחץ על הכפתור ותחשב לו את המשכורת עם פיזיקה אמיתית (עם הוצאות אמיתיות)</pre>
+          <button class="btn98 big" id="calc-btn">⚛️ חשב לו משכורת</button>
+        </div>
+      </div>
+      <p class="calc-result" id="calc-result" hidden></p>
+    </section>
+
+    <section id="baby" data-scene="orbs">
+      <p class="kicker" dir="ltr">chapter 5 / 12</p>
+      <div class="bg-hero">
+        <span class="bg-pill">✨ חדש · BabyGen 4.2 טורבו</span>
+        <h2 class="bg-title">תכירו את <span class="bg-grad">התינוק העתידי שלכם.</span></h2>
+        <p class="bg-lead">מעלים שני הורים, ה-AI שלנו עושה את השאר.<br>ניסיתי את זה על <span class="nm"></span> ו<span class="gf"></span>. אני ממש מצטער.</p>
+      </div>
+      <div class="bg-app">
+        <div class="bg-top">
+          <b class="bg-logo"><i>◆</i> BabyGen</b>
+          <nav><span class="on">יצירה</span><span>היסטוריה</span><span>מחירים</span></nav>
+          <img class="bg-avatar" id="bg-avatar" alt="">
+        </div>
+        <div class="bg-body">
+          <div class="bg-inputs">
+            <p class="bg-label">הורים</p>
+            <div class="bg-parents">
+              <figure class="bg-parent"><img id="dad-img" alt=""><figcaption>הורה 1 · <span class="nm"></span></figcaption></figure>
+              <span class="bg-plus">+</span>
+              <figure class="bg-parent"><div class="bg-slot" id="mom-slot"></div><figcaption>הורה 2 · <span class="gf"></span></figcaption></figure>
+            </div>
+            <p class="bg-label">הגדרות</p>
+            <div class="bg-setting"><span>מודל</span><b>BabyDiffusion v4.2</b></div>
+            <div class="bg-setting"><span>סגנון</span><b>פוטוריאליסטי</b></div>
+            <div class="bg-setting"><span>דומה לאבא</span><div class="bg-slider"><i></i></div><b>100% 🔒</b></div>
+            <button class="bg-go" id="make-baby">✨ צור תינוק</button>
+            <p class="bg-fine">BabyGen עלול לטעות. הפעם לא, לצערנו.</p>
+          </div>
+          <div class="bg-output">
+            <div class="bg-canvas">
+              <p class="bg-empty" id="baby-empty">התינוק שלכם יופיע כאן</p>
+              <img id="baby-big" alt="התינוק שה-AI יצר" hidden>
+              <div class="bg-noise" id="baby-noise" hidden></div>
+              <div class="bg-progress" id="baby-progress" hidden>
+                <div class="bg-bar"><i id="baby-fill"></i></div>
+                <p id="baby-msg"></p>
+              </div>
+            </div>
+            <div class="bg-meta" id="baby-meta" hidden>
+              <span class="bg-chip" id="baby-conf"></span>
+              <span class="bg-chip" id="baby-seed"></span>
+            </div>
+            <div class="bg-reply" id="baby-reply" hidden>
+              <span class="bg-bot">◆</span>
+              <div><b id="baby-top"></b><p id="baby-bottom"></p></div>
+            </div>
+            <div class="bg-actions" id="baby-actions" hidden>
+              <button id="baby-again">↻ שוב</button>
+              <button id="baby-download">⬇ הורדה</button>
+              <button id="baby-share">↗ שיתוף</button>
+            </div>
+            <p class="bg-toast" id="baby-toast" hidden></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="love" style="height:460vh">
+      <div class="stick">
+        <div class="chapter" dir="ltr">chapter 6 / 12 · the nemesis</div>
+        <p class="sub" data-a="0" data-b="0.15"><span class="nm"></span> אומר שהוא שונא את <span class="enemy-nm"></span> 😡</p>
+        <p class="sub" data-a="0.15" data-b="0.3">הוא אומר את זה הרבה.</p>
+        <p class="sub big" data-a="0.3" data-b="0.45" data-boom>כאילו... ממש הרבה 🤔</p>
+        <p class="sub" data-a="0.45" data-b="0.57">ואתם יודעים מה אומרים על אויבים...</p>
+        <p class="sub big" data-a="0.57" data-b="0.68">💋</p>
+        <figure class="leak" id="leak" data-a="0.68" data-b="0.84"><img alt="שניהם מתחבקים" loading="lazy"><figcaption>📸 תיעוד שדלף מהמטבחון במשרד</figcaption></figure>
+        <div class="invite" data-a="0.84" data-b="1.01">
+          <p class="inv-small">יחד עם משפחותיהם</p>
+          <p class="inv-names"><span class="nm"></span> ו<span class="enemy-nm"></span></p>
+          <p class="inv-small">שמחים להזמינכם למסיבה לכבוד החברות שלהם</p>
+          <p class="inv-ship">שם זוגי: <b id="ship"></b> 💕</p>
+          <p class="inv-small">קוד לבוש: בגדים תואמים. התנגדויות לא יתקבלו.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="fight" data-scene="fight">
+      <p class="kicker" dir="ltr">chapter 7 / 12</p>
+      <h2 class="wordart" dir="ltr">main event</h2>
+      <div class="fightcard">
+        <div class="fc-side"><img id="fc-him" alt=""><b class="nm"></b><small>יחס: 45.00</small></div>
+        <div class="fc-vs">VS</div>
+        <div class="fc-side"><span class="fc-opp" id="fc-opp">👨</span><b class="opp-nm"></b><small>יחס: 1.01</small></div>
+        <p class="fc-title" id="fc-title"></p>
+      </div>
+      <div class="arcade" id="fight-stage">
+        <div class="hud">
+          <div class="hp"><b class="nm"></b><div class="hp-bar"><i id="hp-him"></i></div></div>
+          <div class="timer" id="fight-timer">99</div>
+          <div class="hp right"><b class="opp-nm"></b><div class="hp-bar"><i id="hp-dad"></i></div></div>
+        </div>
+        <video id="fight-video" playsinline preload="metadata" hidden></video>
+        <div class="novideo" id="fight-novideo">📼 אין קלטת<br><small>(שים את הסרטון ליד index.html בשם fight.mp4)</small></div>
+        <p class="fight-msg" id="fight-msg"></p>
+        <button class="btn98 big" id="fight-start">▶ יאללה, סיבוב 1</button>
+      </div>
+    </section>
+
+    <section id="memes" data-scene="rain" data-ach="memes">
+      <p class="kicker" dir="ltr">chapter 8 / 12</p>
+      <h2 class="wordart" dir="ltr">meme hall of fame</h2>
+      <p class="blurb">קצת ממים לנפש</p>
+      <div class="meme-grid" id="meme-grid"></div>
+    </section>
+
+    <section id="gallery" data-scene="rain">
+      <p class="kicker" dir="ltr">chapter 9 / 12</p>
+      <h2 class="wordart" dir="ltr">through the years</h2>
+      <div class="construction"><span>🚧 בבנייה מאז <b class="born"></b> 🚧</span></div>
+      <div class="gallery" id="gallery-grid"></div>
+    </section>
+
+    <section id="reviews" data-scene="rain">
+      <p class="kicker" dir="ltr">chapter 10 / 12</p>
+      <h2 class="wordart" dir="ltr">customer reviews</h2>
+      <!-- an online store listing, for him -->
+      <div class="az">
+        <div class="az-product">
+          <img class="vf az-photo" alt="">
+          <div>
+            <h3 class="az-title"><span class="nm"></span>, מהדורה <span class="age"></span> – פיזיקאי, יד שנייה, מגיע עם דעות על ספין קוונטי</h3>
+            <p class="az-brand">מותג: ההורים שלו · <span class="az-link">לחנות של <span class="nm"></span></span></p>
+            <p class="az-rating"><span class="az-stars" id="az-stars"></span> <span class="az-link"><span id="nrev"></span> דירוגים</span></p>
+            <p class="az-bestseller"><b>#1 רב מכר</b> בקטגוריית פיזיקאים שיכלו להיות עשירים</p>
+            <p class="az-price"><sup>$</sup>3<sup>50</sup> <span class="az-list">מחיר מחירון: <s>$70,000.00</s></span></p>
+            <p class="az-stock">נשארו רק 3 חברים במלאי – מהרו להזמין.</p>
+          </div>
+        </div>
+        <div class="az-body">
+          <aside class="az-summary">
+            <h4>ביקורות גולשים</h4>
+            <p class="az-big"><span class="az-stars" id="az-stars-2"></span> <b id="avg"></b> מתוך 5</p>
+            <div id="az-bars"></div>
+            <div class="az-ai">
+              <p class="az-ai-head">✨ מה הגולשים אומרים</p>
+              <p>הגולשים מסכימים שהוא יפה, אבל לא רגוע. חלק מהגולשים טוענים שהם מפרקים אותו מתי שבא להם, למרות שהסרטון מראה בדיוק את ההפך.</p>
+              <p class="az-ai-foot">נוצר ע״י AI מתוך ביקורות הגולשים. (אותו AI גם יצר לו תינוק. זה בסדר.)</p>
+            </div>
+            <button class="az-btn" id="write-review">כתבו ביקורת</button>
+            <p class="az-closed" id="review-closed" hidden>הביקורות סגורות. הוא לא יכול להכיל עוד פידבק.</p>
+          </aside>
+          <div class="az-list" id="review-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="memories" data-scene="wish">
+      <p class="kicker" dir="ltr">chapter 11 / 12</p>
+      <h2 class="wordart" dir="ltr">the good times</h2>
+      <p class="blurb">טוב. אני מפסיק עם הצחוקים לשנייה. (בערך.)</p>
+      <div class="tapes" id="tapes"></div>
+    </section>
+
+    <section id="wish" data-scene="wish">
+      <p class="kicker" dir="ltr">chapter 12 / 12</p>
+      <h2 class="wordart" dir="ltr">make a wish</h2>
+      <p class="wish-sub">רק תלחץ על הכפתור. עשיתי את זה קל, מבטיח.</p>
+      <button class="btn98 big" id="wish-btn">🌠 תבקש משאלה</button>
+      <footer>
+        <p>© <span class="born"></span>–<span class="year"></span> <span class="nm"></span> תעשיות™. כל הזכויות הפוכות.</p>
+        <p>בניתי את זה עם 💩 בנוטפד. אף פריימוורק לא נפגע (שקר, השתמשתי ב-three.js).</p>
+        <p><a href="#">→ הקודם</a> | <a href="#">🎂 טבעת אתרי יום הולדת</a> | <a href="#">הבא ←</a></p>
+        <p><a href="index.html">🇺🇸 in English</a></p>
+      </footer>
+    </section>
+  </main>
+
+  <div id="stay-notice" hidden>
+    <b>🚨 אל תסגור עדיין, לא סיימתי 👀</b>
+    <div class="stay-bar"><i id="stay-fill"></i></div>
+  </div>
+
+  <div id="bsod">
+    <p class="sad">:(</p>
+    <p>החבר שלך נתקל בבעיה וצריך הפעלה מחדש. אני רק אוסף קצת מידע על יום ההולדת, ואז אפעיל אותו מחדש בשבילך.</p>
+    <p><span id="bsod-pct">0</span>% הושלמו</p>
+    <div class="bsod-foot">
+      <div class="qr" id="qr"></div>
+      <div>
+        <p>למידע נוסף על הבעיה ועל פתרונות אפשריים, תתקשר לחבר שלך ותגיד לו מזל טוב.</p>
+        <p>אם אתה מתקשר לתמיכה, תמסור להם את הפרטים האלה:<br>קוד עצירה: TOO_OLD_EXCEPTION<br>מה נכשל: age.sys (v<span class="age"></span>.0)</p>
+      </div>
+    </div>
+    <p id="bsod-done" hidden>▶ לחץ על מקש כלשהו (או על המסך) כדי לאתחל בגיל <span class="next"></span></p>
+  </div>
+
+  <div id="sincere">
+    <div class="card">
+      <p id="sincere-msg"></p>
+      <p class="sig">— <span id="sincere-from"></span></p>
+      <p class="row"><button class="btn98" id="again">↺ עוד פעם מההתחלה</button><button class="btn98" id="stay">סגור</button></p>
+    </div>
+  </div>
+</body>
+</html>

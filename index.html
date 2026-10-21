@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HAPPY BIRTHDAY!!!1!</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Comic+Neue:wght@400;700&family=Great+Vibes&family=Inter:wght@400;500;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+  <script type="module" src="main.js"></script>
+</head>
+<body class="locked">
+  <canvas id="gl"></canvas>
+  <marquee id="ticker" scrollamount="8"></marquee>
+  <button id="mute" title="sound">🔊</button>
+  <div id="counter">VISITORS: <b>000002</b></div>
+
+  <div id="loader">
+    <div class="win98" id="loader-win">
+      <div class="titlebar"><span>birthday_installer.exe</span><button class="x" id="loader-x">✕</button></div>
+      <div class="win-body">
+        <p id="load-msg">initializing...</p>
+        <div class="bar"><div id="load-fill"></div></div>
+        <p id="load-pct">0%</p>
+        <button class="btn98" id="enter" hidden>▶ START THE BIRTHDAY (sound on 🔊)</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    // modules + webgl textures don't work from file://, it needs a tiny local server (see README.md)
+    if (location.protocol === "file:") {
+      document.getElementById("load-msg").textContent = "⚠️ this can't run by double-clicking the file. see README.md (you need a tiny local server) 😅";
+    }
+  </script>
+
+  <main>
+    <section class="scrolly" data-scene="face" style="height:600vh">
+      <div class="stick">
+        <div class="chapter">chapter 1 / 12 · the face</div>
+        <div class="osd" data-a="0" data-b="0.3">▶ PLAY</div>
+        <div class="osd blink" data-a="0.3" data-b="0.68">❚❚ PAUSE</div>
+        <p class="sub big" data-a="0" data-b="0.1">hey <span class="nm"></span>. scroll down 👇</p>
+        <p class="sub" data-a="0.1" data-b="0.3">hold on, let me zoom in on the birthday boy 🔍</p>
+        <p class="sub" data-a="0.3" data-b="0.4" data-boom>STOP ✋ what's going on with his eyes 😳</p>
+        <p class="sub" data-a="0.4" data-b="0.55">don't worry, let me fix it real quick 🔧</p>
+        <p class="sub" data-a="0.55" data-b="0.68" data-boom>fixed it ✅ ...wait. now he's looking at both of us 🤨</p>
+        <p class="sub" data-a="0.68" data-b="0.82" data-boom>his eyes after seeing his AI baby 💀</p>
+        <p class="sub big" data-a="0.82" data-b="1.01">a little better now...</p>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="age" data-ach="age" style="height:360vh">
+      <div class="stick">
+        <div class="chapter">chapter 2 / 12 · the age</div>
+        <p class="sub" data-a="0" data-b="0.22">hold on, let me calculate your age...</p>
+        <p class="sub" data-a="0.22" data-b="0.44">please wait... <span id="fakepct">0</span>%</p>
+        <p class="sub big" data-a="0.44" data-b="0.62" data-boom>you are <span class="age"></span> 💀</p>
+        <p class="sub" data-a="0.62" data-b="0.82">your back is <span class="age20"></span> though</p>
+        <p class="sub" data-a="0.82" data-b="1.01">and it only gets worse from here 👇</p>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="hairline" style="height:500vh">
+      <div class="stick">
+        <div class="docu"></div>
+        <div class="chapter">chapter 3 / 12 · the hairline (a documentary)</div>
+        <div class="hl-hud">📅 <b id="hl-year"></b><br>📏 forehead: <b id="hl-cm"></b></div>
+        <p class="sub" data-a="0" data-b="0.14">🎬 I made a documentary about <span class="nm"></span>'s hairline</p>
+        <p class="sub" data-a="0.14" data-b="0.34">it started slowly</p>
+        <p class="sub" data-a="0.34" data-b="0.54" data-boom>then the hair started leaving. one by one.</p>
+        <p class="sub" data-a="0.54" data-b="0.72">the forehead now has its own weather 🌦️</p>
+        <p class="sub" data-a="0.72" data-b="0.86">the city approved construction 🏗️</p>
+        <p class="sub big" data-a="0.86" data-b="1.01" data-boom>✈️ now boarding: <span class="nm"></span> international airport</p>
+      </div>
+    </section>
+
+    <section id="physics" data-scene="money">
+      <p class="kicker">chapter 4 / 12</p>
+      <h2 class="wordart">the multiverse</h2>
+      <p class="blurb">at some point <span class="nm"></span> had to choose: money or physics.<br>he chose physics. physics says there's another universe where he didn't. let me take you there.</p>
+      <div class="verse-grid">
+        <div class="verse rich">
+          <h3>🌌 universe #1<br><small>he chose money</small></h3>
+          <div class="verse-face" id="rich-face"><img class="vf" alt=""><span class="v-shades">🕶️</span><span class="v-chain"></span></div>
+          <img class="verse-photo" id="rich-photo" alt="him making it rain" hidden>
+          <ul id="verse-money"></ul>
+        </div>
+        <div class="verse poor">
+          <h3>🌍 universe #2<br><small>he chose physics (this one, sadly)</small></h3>
+          <div class="verse-face"><img class="vf" alt=""><span class="v-tear">💧</span></div>
+          <ul id="verse-physics"></ul>
+        </div>
+      </div>
+      <div class="win98 calc">
+        <div class="titlebar"><span>salary_calculator.exe (physics edition)</span></div>
+        <div class="win-body">
+          <pre id="calc-out">press the button and I'll calculate his salary using real physics</pre>
+          <button class="btn98 big" id="calc-btn">⚛️ CALCULATE HIS SALARY</button>
+        </div>
+      </div>
+      <p class="calc-result" id="calc-result" hidden></p>
+    </section>
+
+    <section id="baby" data-scene="orbs">
+      <p class="kicker">chapter 5 / 12</p>
+      <div class="bg-hero">
+        <span class="bg-pill">✨ new · BabyGen 4.2 turbo</span>
+        <h2 class="bg-title">See your <span class="bg-grad">future baby.</span></h2>
+        <p class="bg-lead">Upload two parents. Our AI does the rest.<br>I tried it with <span class="nm"></span> and <span class="gf"></span>. I'm so sorry.</p>
+      </div>
+      <div class="bg-app">
+        <div class="bg-top">
+          <b class="bg-logo"><i>◆</i> BabyGen</b>
+          <nav><span class="on">Create</span><span>History</span><span>Pricing</span></nav>
+          <img class="bg-avatar" id="bg-avatar" alt="">
+        </div>
+        <div class="bg-body">
+          <div class="bg-inputs">
+            <p class="bg-label">Parents</p>
+            <div class="bg-parents">
+              <figure class="bg-parent"><img id="dad-img" alt=""><figcaption>Parent 1 · <span class="nm"></span></figcaption></figure>
+              <span class="bg-plus">+</span>
+              <figure class="bg-parent"><div class="bg-slot" id="mom-slot"></div><figcaption>Parent 2 · <span class="gf"></span></figcaption></figure>
+            </div>
+            <p class="bg-label">Settings</p>
+            <div class="bg-setting"><span>Model</span><b>BabyDiffusion v4.2</b></div>
+            <div class="bg-setting"><span>Style</span><b>Photorealistic</b></div>
+            <div class="bg-setting"><span>Looks like dad</span><div class="bg-slider"><i></i></div><b>100% 🔒</b></div>
+            <button class="bg-go" id="make-baby">✨ Generate baby</button>
+            <p class="bg-fine">BabyGen can make mistakes. Not this time, though.</p>
+          </div>
+          <div class="bg-output">
+            <div class="bg-canvas">
+              <p class="bg-empty" id="baby-empty">Your baby will appear here</p>
+              <img id="baby-big" alt="the AI generated baby" hidden>
+              <div class="bg-noise" id="baby-noise" hidden></div>
+              <div class="bg-progress" id="baby-progress" hidden>
+                <div class="bg-bar"><i id="baby-fill"></i></div>
+                <p id="baby-msg"></p>
+              </div>
+            </div>
+            <div class="bg-meta" id="baby-meta" hidden>
+              <span class="bg-chip" id="baby-conf"></span>
+              <span class="bg-chip" id="baby-seed"></span>
+            </div>
+            <div class="bg-reply" id="baby-reply" hidden>
+              <span class="bg-bot">◆</span>
+              <div><b id="baby-top"></b><p id="baby-bottom"></p></div>
+            </div>
+            <div class="bg-actions" id="baby-actions" hidden>
+              <button id="baby-again">↻ Regenerate</button>
+              <button id="baby-download">⬇ Download</button>
+              <button id="baby-share">↗ Share</button>
+            </div>
+            <p class="bg-toast" id="baby-toast" hidden></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="scrolly" data-scene="love" style="height:460vh">
+      <div class="stick">
+        <div class="chapter">chapter 6 / 12 · the nemesis</div>
+        <p class="sub" data-a="0" data-b="0.15"><span class="nm"></span> says he hates <span class="enemy-nm"></span> 😡</p>
+        <p class="sub" data-a="0.15" data-b="0.3">he says it a lot.</p>
+        <p class="sub big" data-a="0.3" data-b="0.45" data-boom>like... a LOT 🤔</p>
+        <p class="sub" data-a="0.45" data-b="0.57">you know what they say about enemies...</p>
+        <p class="sub big" data-a="0.57" data-b="0.68">💋</p>
+        <figure class="leak" id="leak" data-a="0.68" data-b="0.84"><img alt="the two of them hugging" loading="lazy"><figcaption>📸 leaked footage from the office kitchen</figcaption></figure>
+        <div class="invite" data-a="0.84" data-b="1.01">
+          <p class="inv-small">together with their families</p>
+          <p class="inv-names"><span class="nm"></span> &amp; <span class="enemy-nm"></span></p>
+          <p class="inv-small">request the pleasure of your company at a party celebrating their friendship</p>
+          <p class="inv-ship">ship name: <b id="ship"></b> 💕</p>
+          <p class="inv-small">dress code: matching outfits. objections will not be heard.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="fight" data-scene="fight">
+      <p class="kicker">chapter 7 / 12</p>
+      <h2 class="wordart">main event</h2>
+      <div class="fightcard">
+        <div class="fc-side"><img id="fc-him" alt=""><b class="nm"></b><small>odds: 45.00</small></div>
+        <div class="fc-vs">VS</div>
+        <div class="fc-side"><span class="fc-opp" id="fc-opp">👨</span><b class="opp-nm"></b><small>odds: 1.01</small></div>
+        <p class="fc-title" id="fc-title"></p>
+      </div>
+      <div class="arcade" id="fight-stage">
+        <div class="hud">
+          <div class="hp"><b class="nm"></b><div class="hp-bar"><i id="hp-him"></i></div></div>
+          <div class="timer" id="fight-timer">99</div>
+          <div class="hp right"><b class="opp-nm"></b><div class="hp-bar"><i id="hp-dad"></i></div></div>
+        </div>
+        <video id="fight-video" playsinline preload="metadata" hidden></video>
+        <div class="novideo" id="fight-novideo">📼 no tape inserted<br><small>(put the video next to index.html as fight.mp4)</small></div>
+        <p class="fight-msg" id="fight-msg"></p>
+        <button class="btn98 big" id="fight-start">▶ ROUND 1</button>
+      </div>
+    </section>
+
+    <section id="memes" data-scene="rain" data-ach="memes">
+      <p class="kicker">chapter 8 / 12</p>
+      <h2 class="wordart">meme hall of fame</h2>
+      <p class="blurb">I put <span class="nm"></span> into the classics. you're welcome.</p>
+      <div class="meme-grid" id="meme-grid"></div>
+    </section>
+
+    <section id="gallery" data-scene="rain">
+      <p class="kicker">chapter 9 / 12</p>
+      <h2 class="wordart">through the years</h2>
+      <div class="construction"><span>🚧 UNDER CONSTRUCTION SINCE <b class="born"></b> 🚧</span></div>
+      <div class="gallery" id="gallery-grid"></div>
+    </section>
+
+    <section id="reviews" data-scene="rain">
+      <p class="kicker">chapter 10 / 12</p>
+      <h2 class="wordart">customer reviews</h2>
+      <!-- an online store listing, for him -->
+      <div class="az">
+        <div class="az-product">
+          <img class="vf az-photo" alt="">
+          <div>
+            <h3 class="az-title"><span class="nm"></span>, <span class="age"></span>th Edition – Physicist, Pre-Owned, Comes With Opinions About Quantum Spin</h3>
+            <p class="az-brand">Brand: his parents · <span class="az-link">Visit the <span class="nm"></span> Store</span></p>
+            <p class="az-rating"><span class="az-stars" id="az-stars"></span> <span class="az-link"><span id="nrev"></span> ratings</span></p>
+            <p class="az-bestseller"><b>#1 Best Seller</b> in Physicists Who Could've Been Rich</p>
+            <p class="az-price"><sup>$</sup>3<sup>50</sup> <span class="az-list">List: <s>$70,000.00</s></span></p>
+            <p class="az-stock">Only 3 friends left in stock – order soon.</p>
+          </div>
+        </div>
+        <div class="az-body">
+          <aside class="az-summary">
+            <h4>Customer reviews</h4>
+            <p class="az-big"><span class="az-stars" id="az-stars-2"></span> <b id="avg"></b> out of 5</p>
+            <div id="az-bars"></div>
+            <div class="az-ai">
+              <p class="az-ai-head">✨ Customers say</p>
+              <p>Customers agree he's beautiful, but not calm. Some customers say they could beat him any time, although the video evidence suggests otherwise.</p>
+              <p class="az-ai-foot">AI-generated from the text of customer reviews. (the AI also generated his baby. it's fine.)</p>
+            </div>
+            <button class="az-btn" id="write-review">Write a customer review</button>
+            <p class="az-closed" id="review-closed" hidden>Reviews are closed. He can't handle any more feedback.</p>
+          </aside>
+          <div class="az-list" id="review-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="memories" data-scene="wish">
+      <p class="kicker">chapter 11 / 12</p>
+      <h2 class="wordart">the good times</h2>
+      <p class="blurb">ok. I'll stop with the jokes for a second. (mostly.)</p>
+      <div class="tapes" id="tapes"></div>
+    </section>
+
+    <section id="wish" data-scene="wish">
+      <p class="kicker">chapter 12 / 12</p>
+      <h2 class="wordart">make a wish</h2>
+      <p class="wish-sub">just click the button. I made it easy, I promise.</p>
+      <button class="btn98 big" id="wish-btn">🌠 MAKE A WISH</button>
+      <footer>
+        <p>© <span class="born"></span>–<span class="year"></span> <span class="nm"></span> Industries™. all rights reversed.</p>
+        <p>I made this with 💩 in notepad. no frameworks were harmed (that's a lie, I used three.js).</p>
+        <p><a href="#">⟵ prev</a> | <a href="#">🎂 birthday webring</a> | <a href="#">next ⟶</a></p>
+        <p><a href="he.html">🇮🇱 בעברית</a></p>
+      </footer>
+    </section>
+  </main>
+
+  <div id="stay-notice" hidden>
+    <b>🚨 don't close it yet, I'm not done 👀</b>
+    <div class="stay-bar"><i id="stay-fill"></i></div>
+  </div>
+
+  <div id="bsod">
+    <p class="sad">:(</p>
+    <p>Your friend ran into a problem and needs to restart. I'm just collecting some birthday info, and then I'll restart for you.</p>
+    <p><span id="bsod-pct">0</span>% complete</p>
+    <div class="bsod-foot">
+      <div class="qr" id="qr"></div>
+      <div>
+        <p>For more information about this issue and possible fixes, call your friend and say happy birthday.</p>
+        <p>If you call a support person, give them this info:<br>Stop code: TOO_OLD_EXCEPTION<br>What failed: age.sys (v<span class="age"></span>.0)</p>
+      </div>
+    </div>
+    <p id="bsod-done" hidden>▶ press any key (or tap) to reboot at age <span class="next"></span></p>
+  </div>
+
+  <div id="sincere">
+    <div class="card">
+      <p id="sincere-msg"></p>
+      <p class="sig">— <span id="sincere-from"></span></p>
+      <p class="row"><button class="btn98" id="again">↺ again from the top</button><button class="btn98" id="stay">close</button></p>
+    </div>
+  </div>
+</body>
+</html>

@@ -29,7 +29,9 @@ export function initAudio() {
 // a plain <audio>: iphones play those even with the silent switch on, while a song routed through web audio
 // can come out silent there. when something else needs to be heard it fades down, or, on iphones (which ignore
 // an <audio>'s volume), pauses until that's over
-const SONG_LEVEL = 0.7, SONG_DIPPED = 0.1;
+// (iphones always play it at full volume, so the song file itself is made quieter: music/song.mp3 is
+// music/song-original.mp3 at -6 dB. full volume here = the same loudness on every phone and computer)
+const SONG_LEVEL = 1, SONG_DIPPED = 0.15;
 let song, songWanted = false, volumeWorks = true, fade;
 const dips = new Set();
 const songShouldPlay = () => songWanted && !document.hidden && !(dips.size && !volumeWorks);
